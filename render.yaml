@@ -1,0 +1,26 @@
+services:
+  # Backend API Service
+  - type: web
+    name: productiq-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.4
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: LOG_LEVEL
+        value: INFO
+
+  # Frontend Web App (Static Site)
+  - type: web
+    name: productiq-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://productiq-backend.onrender.com/api/v1

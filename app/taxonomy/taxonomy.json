@@ -1,0 +1,371 @@
+{
+  "version": "1.0",
+
+  "feedback_types": [
+    {
+      "id": "FT001",
+      "name": "Feature Request"
+    },
+    {
+      "id": "FT002",
+      "name": "Bug Report"
+    },
+    {
+      "id": "FT003",
+      "name": "Improvement Suggestion"
+    },
+    {
+      "id": "FT004",
+      "name": "Performance Feedback"
+    },
+    {
+      "id": "FT005",
+      "name": "Security Concern"
+    },
+    {
+      "id": "FT006",
+      "name": "Usability Feedback"
+    },
+    {
+      "id": "FT007",
+      "name": "Integration Request"
+    },
+    {
+      "id": "FT008",
+      "name": "General Feedback"
+    }
+  ],
+
+  "categories": [
+
+    {
+      "id": "CAT001",
+      "name": "Authentication",
+
+      "subcategories": [
+
+        {
+          "id": "AUTH001",
+          "name": "Login"
+        },
+        {
+          "id": "AUTH002",
+          "name": "Signup"
+        },
+        {
+          "id": "AUTH003",
+          "name": "OTP Verification"
+        },
+        {
+          "id": "AUTH004",
+          "name": "Password Recovery"
+        },
+        {
+          "id": "AUTH005",
+          "name": "Session Management"
+        },
+        {
+          "id": "AUTH006",
+          "name": "Logout"
+        },
+        {
+          "id": "AUTH007",
+          "name": "Multi-Factor Authentication"
+        },
+        {
+          "id": "AUTH008",
+          "name": "Account Lock"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT002",
+      "name": "Billing & Subscription",
+
+      "subcategories": [
+
+        {
+          "id": "BILL001",
+          "name": "Payments"
+        },
+        {
+          "id": "BILL002",
+          "name": "Refunds"
+        },
+        {
+          "id": "BILL003",
+          "name": "Invoices"
+        },
+        {
+          "id": "BILL004",
+          "name": "Subscription Plans"
+        },
+        {
+          "id": "BILL005",
+          "name": "Trial"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT003",
+      "name": "Dashboard & Analytics",
+
+      "subcategories": [
+
+        {
+          "id": "DASH001",
+          "name": "Charts"
+        },
+        {
+          "id": "DASH002",
+          "name": "Reports"
+        },
+        {
+          "id": "DASH003",
+          "name": "Real-time Metrics"
+        },
+        {
+          "id": "DASH004",
+          "name": "Activity Logs"
+        },
+        {
+          "id": "DASH005",
+          "name": "Widgets"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT004",
+      "name": "API & Integrations",
+
+      "subcategories": [
+
+        {
+          "id": "API001",
+          "name": "REST API"
+        },
+        {
+          "id": "API002",
+          "name": "GraphQL"
+        },
+        {
+          "id": "API003",
+          "name": "OAuth"
+        },
+        {
+          "id": "API004",
+          "name": "Webhooks"
+        },
+        {
+          "id": "API005",
+          "name": "SDK"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT005",
+      "name": "User Management",
+
+      "subcategories": [
+
+        {
+          "id": "USR001",
+          "name": "Roles"
+        },
+        {
+          "id": "USR002",
+          "name": "Permissions"
+        },
+        {
+          "id": "USR003",
+          "name": "Profile"
+        },
+        {
+          "id": "USR004",
+          "name": "Invitations"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT006",
+      "name": "Notifications",
+
+      "subcategories": [
+
+        {
+          "id": "NOT001",
+          "name": "Email"
+        },
+        {
+          "id": "NOT002",
+          "name": "SMS"
+        },
+        {
+          "id": "NOT003",
+          "name": "Push Notification"
+        },
+        {
+          "id": "NOT004",
+          "name": "Slack"
+        },
+        {
+          "id": "NOT005",
+          "name": "Microsoft Teams"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT007",
+      "name": "Search & Filter",
+
+      "subcategories": [
+
+        {
+          "id": "SEARCH001",
+          "name": "Search"
+        },
+        {
+          "id": "SEARCH002",
+          "name": "Filtering"
+        },
+        {
+          "id": "SEARCH003",
+          "name": "Sorting"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT008",
+      "name": "Performance",
+
+      "subcategories": [
+
+        {
+          "id": "PERF001",
+          "name": "Slow Loading"
+        },
+        {
+          "id": "PERF002",
+          "name": "High CPU Usage"
+        },
+        {
+          "id": "PERF003",
+          "name": "Memory Leak"
+        },
+        {
+          "id": "PERF004",
+          "name": "Database Performance"
+        },
+        {
+          "id": "PERF005",
+          "name": "Network Latency"
+        }
+      ]
+    },
+
+    {
+      "id": "CAT009",
+      "name": "Security & Compliance",
+
+      "subcategories": [
+
+        {
+          "id": "SEC001",
+          "name": "SQL Injection"
+        },
+        {
+          "id": "SEC002",
+          "name": "Cross-Site Scripting"
+        },
+        {
+          "id": "SEC003",
+          "name": "CSRF"
+        },
+        {
+          "id": "SEC004",
+          "name": "Encryption"
+        },
+        {
+          "id": "SEC005",
+          "name": "Audit Logs"
+        }
+      ]
+    }
+  ],
+
+  "bug_categories": [
+    "Crash/Fatal Error",
+    "Data Loss",
+    "Security Vulnerability",
+    "Functional Bug",
+    "UI Layout Glitch",
+    "Performance Issue",
+    "Compatibility Issue",
+    "Network Issue",
+    "N/A"
+  ],
+
+  "severity_levels": [
+    "Blocker",
+    "Critical",
+    "Major",
+    "Minor",
+    "Trivial"
+  ],
+
+  "priority_levels": [
+    "P0",
+    "P1",
+    "P2",
+    "P3"
+  ],
+
+  "impact_areas": [
+    "All Users",
+    "Enterprise Customers",
+    "Admin Users",
+    "API Users",
+    "Mobile Users",
+    "Internal Staff"
+  ],
+
+  "platforms": [
+    "Web",
+    "Android",
+    "iOS",
+    "Desktop",
+    "API"
+  ],
+
+  "agent_actions": [
+    "CREATE_FEATURE",
+    "LINK_FEATURE",
+    "CREATE_BUG",
+    "LINK_BUG",
+    "MERGE_DUPLICATE",
+    "ESCALATE",
+    "REJECT",
+    "REQUEST_MORE_INFO"
+  ],
+
+  "confidence_levels": [
+    "High",
+    "Medium",
+    "Low"
+  ],
+
+  "roadmap_status": [
+    "Backlog",
+    "Planned",
+    "In Progress",
+    "Testing",
+    "Released"
+  ]
+}
