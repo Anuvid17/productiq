@@ -89,16 +89,24 @@ class FeedbackService:
             status=status_val
         )
 
-        # 5. Roadmap Generation (only if not a merged duplicate)
+        # 5. Roadmap Generation
         roadmap_record: Optional[Roadmap] = None
         tasks_list = []
-        if not dup_result.is_duplicate or action not in ["MERGE_DUPLICATE"]:
+        try:
             roadmap_record = self.roadmap_service.create_roadmap_for_feedback(
                 feedback_id=feedback_record.id,
                 analysis=analysis,
                 feedback_text=raw_text
             )
             tasks_list = self.roadmap_service.task_repo.list_by_roadmap(roadmap_record.id)
+        except Exception as rm_err:
+            logger.error(f"Roadmap creation error: {rm_err}. Attempting fallback roadmap.")
+            if dup_result.matched_feedback_id:
+                roadmap_repo = RoadmapRepository(self.session)
+                rm_parent = roadmap_repo.get_by_feedback_id(dup_result.matched_feedback_id)
+                if rm_parent:
+                    roadmap_record = rm_parent
+                    tasks_list = self.roadmap_service.task_repo.list_by_roadmap(rm_parent.id)
 
         self.session.commit()
 

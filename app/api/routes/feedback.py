@@ -174,6 +174,33 @@ def get_feedback(
     roadmap_repo = RoadmapRepository(db)
     rm = roadmap_repo.get_by_feedback_id(feedback_id)
 
+    if not rm:
+        from app.services.roadmap_service import RoadmapService
+        from app.schemas.agent import FeedbackAnalysis
+        roadmap_service = RoadmapService(db)
+        try:
+            analysis = FeedbackAnalysis(
+                summary=fb.summary or fb.original_text[:80],
+                feedback_type=fb.feedback_type or "General Feedback",
+                category=fb.category or "Authentication",
+                subcategory=fb.subcategory or "Login",
+                bug_category=fb.bug_category or "N/A",
+                severity=fb.severity or "Major",
+                priority=fb.priority or "P2",
+                impact_area=fb.impact_area or "All Users",
+                platform=fb.platform or "Web",
+                recommended_action=fb.recommended_action or "CREATE_FEATURE",
+                confidence=fb.confidence or "Medium"
+            )
+            rm = roadmap_service.create_roadmap_for_feedback(
+                feedback_id=feedback_id,
+                analysis=analysis,
+                feedback_text=fb.original_text
+            )
+            db.commit()
+        except Exception as err:
+            logger.warning(f"Could not auto-generate missing roadmap for feedback '{feedback_id}': {err}")
+
     roadmap_read = None
     if rm:
         task_repo = RoadmapTaskRepository(db)

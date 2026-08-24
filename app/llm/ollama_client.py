@@ -32,7 +32,15 @@ class OllamaClient:
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> str:
         """
         Generate text response from Ollama model.
+        Fails fast if Ollama server is unreachable to allow agent fallbacks.
         """
+        # Fast availability check to prevent long socket timeout delays when Ollama is offline
+        health = self.check_health()
+        if not health.get("available"):
+            raise RuntimeError(
+                f"Ollama server at {self.host} is unavailable: {health.get('error', 'Connection refused')}"
+            )
+
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
