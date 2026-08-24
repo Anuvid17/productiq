@@ -197,12 +197,14 @@ def get_feedback(
                 analysis=analysis,
                 feedback_text=fb.original_text
             )
+            if rm and not getattr(rm, "id", None):
+                rm.id = uuid.uuid4()
             db.commit()
         except Exception as err:
             logger.warning(f"Could not auto-generate missing roadmap for feedback '{feedback_id}': {err}")
 
     roadmap_read = None
-    if rm:
+    if rm and getattr(rm, "id", None):
         task_repo = RoadmapTaskRepository(db)
         tasks = task_repo.list_by_roadmap(rm.id)
         task_reads = [RoadmapTaskRead.model_validate(t) for t in tasks] if tasks else []

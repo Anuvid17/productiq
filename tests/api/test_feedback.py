@@ -159,12 +159,20 @@ def test_get_feedback_list_pagination(mock_db_session):
 # 7. GET feedback by valid ID -> 200
 def test_get_feedback_by_valid_id(mock_db_session, sample_feedback_model):
     target_id = sample_feedback_model.id
+    roadmap_mock = Roadmap(
+        id=uuid.UUID("22222222-2222-2222-2222-222222222222"),
+        feedback_id=target_id,
+        title="Resolve Login Freeze",
+        status="Backlog",
+        effort="M",
+        progress=0
+    )
     with patch("app.api.routes.feedback.FeedbackRepository") as mock_fb_repo, \
          patch("app.api.routes.feedback.RoadmapRepository") as mock_rm_repo, \
          patch("app.api.routes.feedback.RoadmapTaskRepository") as mock_task_repo:
 
         mock_fb_repo.return_value.get_by_id.return_value = sample_feedback_model
-        mock_rm_repo.return_value.get_by_feedback_id.return_value = None
+        mock_rm_repo.return_value.get_by_feedback_id.return_value = roadmap_mock
         mock_task_repo.return_value.list_by_roadmap.return_value = []
 
         app.dependency_overrides[get_db] = lambda: mock_db_session
