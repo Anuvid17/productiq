@@ -36,6 +36,7 @@ class RoadmapAgent:
     ) -> Dict[str, Any]:
         """
         Generates a validated developer roadmap dict based on feedback analysis.
+        Falls back to rule-based roadmap construction if Ollama connection fails in cloud environments.
         """
         analysis_data = analysis.model_dump() if isinstance(analysis, FeedbackAnalysis) else analysis
         system_prompt = self.prompt_builder.build_system_prompt()
@@ -72,6 +73,48 @@ class RoadmapAgent:
                         f"YOUR PREVIOUS ROADMAP RESPONSE HAD VALIDATION ERRORS:\n{error_msg}\n\n"
                         f"Please fix the errors and return ONLY the corrected valid JSON roadmap object:"
                     )
+            except Exception as err:
+                logger.warning(f"RoadmapAgent encountered connection/generation exception with Ollama: {err}. Falling back to rule-based roadmap creation.")
+                return self._heuristic_fallback(analysis_data, feedback_text)
 
-        logger.error(f"RoadmapAgent failed generation after {self.max_retries} attempts.")
-        raise ValueError(f"RoadmapAgent failed validation: {last_error}") from last_error
+        logger.warning(f"RoadmapAgent failed validation after {self.max_retries} attempts: {last_error}. Using heuristic fallback.")
+        return self._heuristic_fallback(analysis_data, feedback_text)
+
+    def _heuristic_fallback(self, analysis_data: Dict[str, Any], feedback_text: str) -> Dict[str, Any]:
+        """Heuristic rule-based roadmap fallback when Ollama is unreachable."""
+        category = analysis_data.get("category", "General")
+        subcategory = analysis_data.get("subcategory", "System Issue")
+        prio = analysis_data.get("priority", "P2")
+        title = f"Resolve {category} - {subcategory}"
+
+        return {
+            "title": title,
+            "description": f"Developer roadmap generated to address user feedback: {feedback_text[:150]}",
+            "status": "Planned",
+            "effort": "M",
+            "progress": 0,
+            "tasks": [
+                {
+                    "title": f"Investigate root cause in {category} ({subcategory})",
+                    "description": f"Reproduce reported behavior and trace component logs: {feedback_text[:100]}",
+                    "effort": "S",
+                    "priority": prio,
+                    "progress": 0,
+                    "acceptance_criteria": [
+                        "Issue reproduced in test environment",
+                        "Root cause documented with stack trace"
+                    ]
+                },
+                {
+                    "title": f"Develop fix and unit tests for {subcategory}",
+                    "description": "Implement bug fix or feature enhancement and verify code coverage.",
+                    "effort": "M",
+                    "priority": prio,
+                    "progress": 0,
+                    "acceptance_criteria": [
+                        "Code changes merged into main branch",
+                        "Automated unit tests pass successfully"
+                    ]
+                }
+            ]
+        }

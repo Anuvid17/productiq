@@ -3,17 +3,30 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+from contextlib import asynccontextmanager
 from app.config import CORS_ORIGINS
 from app.utils.logger import logger
-from app.database.db import check_db_health, Base, SessionLocal
+from app.database.db import check_db_health, Base, SessionLocal, get_active_engine
 from app.services.feedback_service import FeedbackService
 from app.api.router import api_router
+
+@asynccontextmanager
+async def lifespan(app_instance: FastAPI):
+    """Lifespan event handler initializing DB tables on application startup."""
+    try:
+        active_engine = get_active_engine()
+        Base.metadata.create_all(bind=active_engine)
+        logger.info(f"Database initialized successfully on startup using engine: {active_engine.dialect.name}")
+    except Exception as e:
+        logger.error(f"Startup database initialization error: {e}")
+    yield
 
 # Initialize FastAPI application instance
 app = FastAPI(
     title="ProductIQ API",
     description="AI-Driven Product Feedback Intelligence & Developer Workflow Platform",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Enable CORS for React development server
