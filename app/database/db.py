@@ -64,16 +64,18 @@ _last_health_status = None
 def get_active_engine():
     """
     Returns primary PostgreSQL engine if connected, or initializes SQLite fallback engine if offline.
-    Uses StaticPool for SQLite in-memory engine so tables and records persist across sessions.
-    Caches health status for 10 seconds to avoid connection timeout latency on every request.
+    Caches health status to avoid connection timeout latency on every request.
     """
     global _fallback_engine, _last_health_check_time, _last_health_status
+    if _fallback_engine is not None:
+        return _fallback_engine
+
     now = time.time()
-    if _last_health_status is None or (now - _last_health_check_time) > 10.0:
+    if _last_health_status is None or (now - _last_health_check_time) > 300.0:
         _last_health_status = check_db_health(engine)
         _last_health_check_time = now
 
-    if _last_health_status["connected"]:
+    if _last_health_status.get("connected"):
         return engine
     
     if _fallback_engine is None:
@@ -105,20 +107,20 @@ def check_db_health(target_engine=None) -> dict:
     Lightweight health check performing a 'SELECT 1' query.
     Returns structured status result without exposing credentials.
     """
-    active_engine = target_engine or engine
+    active = target_engine or get_active_engine()
     try:
-        with active_engine.connect() as conn:
+        with active.connect() as conn:
             conn.execute(text("SELECT 1"))
         return {
             "status": "healthy",
-            "database": active_engine.dialect.name,
+            "database": active.dialect.name,
             "connected": True
         }
     except Exception as e:
         logger.warning(f"Database health check failed: {e}")
         return {
             "status": "unhealthy",
-            "database": active_engine.dialect.name,
+            "database": active.dialect.name,
             "connected": False,
             "error": str(e)
         }
