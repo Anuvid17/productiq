@@ -166,6 +166,19 @@ html.theme-cyber .bg-slate-900 {
   transform: translateY(-2px);
 }
 
+/* Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up,
+  .animate-fade-in,
+  .animate-dropdown-enter,
+  .animate-pulse-glow,
+  .hover-lift {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

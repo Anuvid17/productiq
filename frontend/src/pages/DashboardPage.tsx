@@ -49,24 +49,25 @@ export const DashboardPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="space-y-8 animate-fade-in pb-8">
       {/* Page Title & Top Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-sans">
             ProductIQ Intelligence Dashboard
           </h1>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs sm:text-sm text-slate-400 font-normal mt-0.5">
             Real-time AI product feedback analytics, duplicate detection, and developer workflows
           </p>
         </div>
         <div className="flex items-center gap-3">
           <button
             onClick={loadDashboardData}
-            className="p-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-200"
-            title="Refresh Data"
+            disabled={loading}
+            className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 text-slate-300 hover:text-white hover:bg-slate-800/90 hover:border-slate-700 transition-all duration-200 active:scale-95 disabled:opacity-50"
+            title="Refresh Dashboard Data"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-blue-400' : ''}`} />
           </button>
           <NavLink
             to="/feedback/new"
@@ -78,7 +79,7 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Summary Metrics Cards with Staggered Entrance */}
+      {/* Summary Metrics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="animate-slide-up opacity-0">
           <StatCard
@@ -118,81 +119,104 @@ export const DashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Dashboard Visualizations / Analytics Widgets */}
+      {/* Analytics Panels: Type, Priority, and Roadmap Analytics */}
       {summary && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-slide-up opacity-0 delay-300">
           {/* Breakdown by Feedback Type */}
-          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-blue-400 uppercase tracking-wider">
-              <PieChart className="w-4 h-4" />
-              <span>Feedback by Type</span>
+          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-blue-400 uppercase tracking-wider">
+                <PieChart className="w-4 h-4" />
+                <span>Feedback by Type</span>
+              </div>
+              <span className="text-[11px] font-mono font-semibold text-slate-400 bg-slate-950 px-2 py-0.5 rounded-md border border-slate-800">
+                {summary.total_feedback} Total
+              </span>
             </div>
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-3 pt-1 flex-1 flex flex-col justify-center">
               {Object.entries(summary.feedback_by_type).map(([k, v]) => {
                 const pct = summary.total_feedback > 0 ? Math.round((v / summary.total_feedback) * 100) : 0;
                 return (
-                  <div key={k} className="text-xs space-y-1">
-                    <div className="flex justify-between font-medium text-slate-300">
+                  <div key={k} className="text-xs space-y-1.5">
+                    <div className="flex justify-between font-semibold text-slate-200">
                       <span>{k}</span>
                       <span className="font-mono text-slate-400">{v} ({pct}%)</span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                      <div className="bg-gradient-to-r from-blue-600 to-indigo-500 h-2 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                    <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800/80">
+                      <div
+                        className="bg-gradient-to-r from-blue-600 via-indigo-500 to-cyan-400 h-2.5 rounded-full transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
                     </div>
                   </div>
                 );
               })}
               {Object.keys(summary.feedback_by_type).length === 0 && (
-                <span className="text-xs text-slate-500 italic">No feedback types recorded.</span>
+                <span className="text-xs text-slate-500 italic block text-center py-4">No feedback types recorded.</span>
               )}
             </div>
           </div>
 
           {/* Breakdown by Priority */}
-          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-amber-400 uppercase tracking-wider">
-              <BarChart3 className="w-4 h-4" />
-              <span>Feedback by Priority</span>
+          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase tracking-wider">
+                <BarChart3 className="w-4 h-4" />
+                <span>Feedback by Priority</span>
+              </div>
+              <span className="text-[11px] font-mono font-semibold text-slate-400 bg-slate-950 px-2 py-0.5 rounded-md border border-slate-800">
+                Distribution
+              </span>
             </div>
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-3 pt-1 flex-1 flex flex-col justify-center">
               {Object.entries(summary.feedback_by_priority).map(([k, v]) => {
                 const pct = summary.total_feedback > 0 ? Math.round((v / summary.total_feedback) * 100) : 0;
-                const barColor = k === 'P0' ? 'bg-gradient-to-r from-rose-600 to-red-500' : k === 'P1' ? 'bg-gradient-to-r from-amber-500 to-orange-400' : 'bg-gradient-to-r from-blue-500 to-cyan-400';
+                const barColor =
+                  k === 'P0'
+                    ? 'bg-gradient-to-r from-rose-600 to-red-500'
+                    : k === 'P1'
+                    ? 'bg-gradient-to-r from-amber-500 to-orange-400'
+                    : 'bg-gradient-to-r from-blue-500 to-cyan-400';
                 return (
-                  <div key={k} className="text-xs space-y-1">
-                    <div className="flex justify-between font-medium text-slate-300">
-                      <span>{k}</span>
+                  <div key={k} className="text-xs space-y-1.5">
+                    <div className="flex justify-between font-semibold text-slate-200">
+                      <span>{k} Priority</span>
                       <span className="font-mono text-slate-400">{v} ({pct}%)</span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                      <div className={`${barColor} h-2 rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
+                    <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-800/80">
+                      <div className={`${barColor} h-2.5 rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 );
               })}
               {Object.keys(summary.feedback_by_priority).length === 0 && (
-                <span className="text-xs text-slate-500 italic">No priority entries recorded.</span>
+                <span className="text-xs text-slate-500 italic block text-center py-4">No priority entries recorded.</span>
               )}
             </div>
           </div>
 
-          {/* Active Roadmaps Summary */}
-          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-5 shadow-lg space-y-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              <TrendingUp className="w-4 h-4" />
-              <span>Roadmap Analytics</span>
-            </div>
-            <div className="space-y-3 pt-1 text-xs">
-              <div className="flex justify-between items-center p-2.5 bg-slate-950/60 rounded-xl border border-slate-800">
-                <span className="text-slate-400">Active Roadmaps:</span>
-                <span className="font-bold text-white text-sm">{summary.active_roadmaps}</span>
+          {/* Roadmap Analytics Summary */}
+          <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-lg space-y-4 flex flex-col justify-between">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                <TrendingUp className="w-4 h-4" />
+                <span>Roadmap Analytics</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 bg-slate-950/60 rounded-xl border border-slate-800">
-                <span className="text-slate-400">Average Progress:</span>
+              <span className="text-[11px] font-mono font-semibold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
+                Active
+              </span>
+            </div>
+            <div className="space-y-3 pt-1 flex-1 flex flex-col justify-center text-xs">
+              <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+                <span className="text-slate-400 font-medium">Active Roadmaps</span>
+                <span className="font-extrabold text-white text-base">{summary.active_roadmaps}</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+                <span className="text-slate-400 font-medium">Average Progress</span>
                 <span className="font-bold text-emerald-400 text-sm font-mono">{summary.average_roadmap_progress}%</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 bg-slate-950/60 rounded-xl border border-slate-800">
-                <span className="text-slate-400">Resolution Rate:</span>
+              <div className="flex justify-between items-center p-3 bg-slate-950/60 rounded-xl border border-slate-800/80">
+                <span className="text-slate-400 font-medium">Resolution Rate</span>
                 <span className="font-bold text-blue-400 text-sm font-mono">{summary.resolution_rate}%</span>
               </div>
             </div>
@@ -204,14 +228,14 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Feedback (2 cols) */}
         <div className="lg:col-span-2 bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-xl">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-5">
             <div>
-              <h2 className="text-base font-bold text-white">Recent Feedback</h2>
-              <p className="text-xs text-slate-400">Latest analyzed feedback entries</p>
+              <h2 className="text-base font-extrabold text-white tracking-tight">Recent Feedback</h2>
+              <p className="text-xs text-slate-400 font-normal">Latest analyzed feedback entries</p>
             </div>
             <NavLink
               to="/feedback"
-              className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 group"
+              className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 group transition-colors"
             >
               <span>View All</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -232,14 +256,14 @@ export const DashboardPage: React.FC = () => {
 
         {/* Active Roadmaps (1 col) */}
         <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-1">
             <div>
-              <h2 className="text-base font-bold text-white">Active Roadmaps</h2>
-              <p className="text-xs text-slate-400">Developer progress tracking</p>
+              <h2 className="text-base font-extrabold text-white tracking-tight">Active Roadmaps</h2>
+              <p className="text-xs text-slate-400 font-normal">Developer progress tracking</p>
             </div>
             <NavLink
               to="/roadmaps"
-              className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 group"
+              className="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 group transition-colors"
             >
               <span>All Roadmaps</span>
               <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
@@ -247,7 +271,7 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {roadmaps.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {roadmaps.map((rm) => (
                 <RoadmapCard key={rm.id} roadmap={rm} />
               ))}
