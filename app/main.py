@@ -41,6 +41,14 @@ app.add_middleware(
 # Mount API v1 Router
 app.include_router(api_router)
 
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "ProductIQ API", "version": "1.0.0"}
+
+@app.get("/health")
+def health_root():
+    return {"status": "ok", "service": "ProductIQ API"}
+
 
 def run_demo(session):
     feedback_text = "The login page freezes after clicking Sign In."
