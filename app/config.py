@@ -36,6 +36,6 @@ LOG_LEVEL = os.getenv(
 
 raw_cors = os.getenv(
     "CORS_ORIGINS",
-    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:80,http://localhost"
+    "*,http://localhost:5173,http://127.0.0.1:5173,https://productiq-frontend.onrender.com"
 )
 CORS_ORIGINS = [origin.strip() for origin in raw_cors.split(",") if origin.strip()]
