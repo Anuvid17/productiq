@@ -20,10 +20,23 @@ export const Header: React.FC = () => {
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const themeMenuRef = useRef<HTMLDivElement>(null);
 
-  const checkNotificationsAndHealth = () => {
-    api.getHealth()
-      .then(setHealth)
-      .catch(() => setHealth(null));
+  const checkNotificationsAndHealth = async () => {
+    try {
+      const data = await api.getHealth();
+      setHealth(data);
+    } catch {
+      try {
+        const res = await fetch('https://productiq-backend-2x15.onrender.com/api/v1/health');
+        if (res.ok) {
+          const data = await res.json();
+          setHealth(data);
+        } else {
+          setHealth(null);
+        }
+      } catch {
+        setHealth(null);
+      }
+    }
 
     api.getNotifications(false) // unread only
       .then((notifs) => setUnreadCount(notifs.length))
