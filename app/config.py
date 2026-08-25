@@ -24,10 +24,16 @@ OLLAMA_TIMEOUT = float(
     os.getenv("OLLAMA_TIMEOUT", "120.0")
 )
 
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+psycopg://postgres:postgres@localhost:5432/productiq"
-)
+raw_db_url = os.getenv("DATABASE_URL", "").strip()
+
+if not raw_db_url or "localhost" in raw_db_url or "127.0.0.1" in raw_db_url:
+    DATABASE_URL = "sqlite:///productiq_dev.db"
+elif raw_db_url.startswith("postgres://"):
+    DATABASE_URL = raw_db_url.replace("postgres://", "postgresql+psycopg://", 1)
+elif raw_db_url.startswith("postgresql://") and "+psycopg" not in raw_db_url:
+    DATABASE_URL = raw_db_url.replace("postgresql://", "postgresql+psycopg://", 1)
+else:
+    DATABASE_URL = raw_db_url
 
 LOG_LEVEL = os.getenv(
     "LOG_LEVEL",

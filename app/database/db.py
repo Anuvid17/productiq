@@ -107,7 +107,7 @@ def check_db_health(target_engine=None) -> dict:
     Lightweight health check performing a 'SELECT 1' query.
     Returns structured status result without exposing credentials.
     """
-    active = target_engine or get_active_engine()
+    active = target_engine or (_fallback_engine if _fallback_engine is not None else engine)
     try:
         with active.connect() as conn:
             conn.execute(text("SELECT 1"))
