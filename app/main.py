@@ -38,16 +38,30 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from pathlib import Path
+
 # Mount API v1 Router
 app.include_router(api_router)
-
-@app.get("/")
-def root():
-    return {"status": "ok", "service": "ProductIQ API", "version": "1.0.0"}
 
 @app.get("/health")
 def health_root():
     return {"status": "ok", "service": "ProductIQ API"}
+
+# Serve frontend compiled static assets and SPA fallback
+frontend_dist = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+if frontend_dist.exists():
+    assets_dir = frontend_dist / "assets"
+    if assets_dir.exists():
+        app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
+
+    @app.get("/{full_path:path}")
+    def serve_frontend(full_path: str):
+        file_path = frontend_dist / full_path
+        if full_path and file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+        return FileResponse(frontend_dist / "index.html")
 
 
 def run_demo(session):
