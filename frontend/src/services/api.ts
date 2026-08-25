@@ -12,7 +12,7 @@ import type {
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   (import.meta.env.PROD
-    ? 'https://productiq-backend.onrender.com/api/v1'
+    ? 'https://productiq-backend-2x15.onrender.com/api/v1'
     : '/api/v1');
 
 export const apiClient = axios.create({
